@@ -1,8 +1,3 @@
 defmodule KaffeineTest do
-  use ExUnit.Case
-  doctest Kaffeine
-
-  test "the truth" do
-    assert 1 + 1 == 2
-  end
+  use ExUnit.Case, async: true
 end

@@ -38,11 +38,13 @@ The docs can be found at [https://hexdocs.pm/kaffeine](https://hexdocs.pm/kaffei
     def start_link(_opts) do
       import Kaffeine.Spec
 
-      [
-        consume("MyTopic", :my_topic, []),
-        consume("AnotherTopic", [MySimpleApp.AnotherTopicHandler, :handle, []]),
+      opts = [
       ]
-      |> Kaffeine.start_consumer()
+
+      [
+        consume("MyTopic", {MySimpleApp.KafkaConsumer, :my_topic, []}, []),
+      ]
+      |> Kaffeine.start_consumer(opts)
     end
 
     defp my_topic(event) do
