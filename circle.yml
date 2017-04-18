@@ -1,0 +1,34 @@
+---
+version: 2
+jobs:
+  build:
+    working_directory: /root/kaffeine
+
+    docker:
+      - image: avvo/elixir-circleci:1.4.1-3
+
+    environment:
+      MIX_ENV: test
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: kaffeine-{{ .Branch }}
+          key: kaffeine-master
+
+      - run: mix do deps.get, deps.compile, compile
+
+      - run:
+          name: Run Tests
+          command: mix test
+
+      - run: mix dialyzer
+
+      - save_cache:
+          key: kaffeine-{{ .Branch }}
+          paths:
+            - _build
+            - deps
+            - .local.plt
+            - .local.plt.hash
