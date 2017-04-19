@@ -20,4 +20,8 @@ config :kafka_ex,
   max_seconds: 60,
   kafka_version: "0.8.2"
 
+config :kafka_impl, :impl, KafkaImpl.KafkaEx
+
+config :kaffeine, consumer_wait_ms: 500
+
 import_config "#{Mix.env}.exs"

@@ -6,9 +6,11 @@ jobs:
 
     docker:
       - image: avvo/elixir-circleci:1.4.1-3
+      - image: wurstmeister/kafka:0.8.2.2
 
     environment:
       MIX_ENV: test
+      KAFKA_HOSTS: kafka:9092
 
     steps:
       - checkout

@@ -9,6 +9,7 @@ defmodule Kaffeine.Mixfile do
       description: description(),
       dialyzer: [plt_add_deps: :transitive],
       elixir: "~> 1.4",
+      elixirc_paths: elixirc_paths(Mix.env),
       package: package(),
       start_permanent: Mix.env == :prod,
       version: "0.1.0",
@@ -23,10 +24,12 @@ defmodule Kaffeine.Mixfile do
   defp deps do
     [
       {:kafka_ex, "~> 0.6"},
+      {:kafka_impl, "~> 0.4"},
 
       # NON-PRODUCTION DEPS
       {:dialyxir, "~> 0.5", only: [:dev, :test]},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
     ]
   end
 
@@ -46,4 +49,7 @@ defmodule Kaffeine.Mixfile do
       }
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_),     do: ["lib"]
 end
