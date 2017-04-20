@@ -1,6 +1,4 @@
 defmodule Kaffeine.Consumer do
-  import Kaffeine.Util, only: [opts_or_application: 3]
-
   @moduledoc """
   Convenience functions for defining Kaffeine consumers.
   """
