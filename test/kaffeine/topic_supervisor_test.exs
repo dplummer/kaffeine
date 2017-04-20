@@ -5,7 +5,7 @@ defmodule Kaffeine.TopicSupervisorTest do
     test "builds n initialization tuples for partition supervisors" do
       brokers = [{"localhost", 9092}]
       partition_count = 4
-      consumer = %Kaffeine.Spec.Consumer{topic: "legolas", brokers: brokers}
+      consumer = %Kaffeine.Consumer{topic: "legolas", brokers: brokers}
 
       result = Kaffeine.TopicSupervisor.supervisor_args(
         consumer, partition_count

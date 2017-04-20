@@ -23,7 +23,7 @@ defmodule Kaffeine.IntegrationTest do
     assert :ok = KafkaImpl.KafkaEx.produce(msg, worker_name: worker)
 
     {:ok, _pid} = Kaffeine.start_consumers(
-      [Kaffeine.Spec.consume("test", fun)],
+      [Kaffeine.consume("test", fun)],
       brokers: brokers,
       kafka_impl: KafkaImpl.KafkaEx
     )

@@ -13,7 +13,7 @@ defmodule Kaffeine.PartitionConsumerTest do
 
     KafkaMock.TestHelper.send_message(test_pid, {topic, partition, %KafkaEx.Protocol.Fetch.Message{offset: offset, value: message}, offset})
 
-    consumer = %Kaffeine.Spec.Consumer{
+    consumer = %Kaffeine.Consumer{
       topic: topic,
       partition: partition,
       offset: offset,

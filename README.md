@@ -14,7 +14,7 @@ The docs can be found at [https://hexdocs.pm/kaffeine](https://hexdocs.pm/kaffei
     ]
   end
   ```
-2. Configure KafkaEx in your `config/config.exs`:
+2. Configure KafkaEx, KafkaImpl, and Kaffeine in your `config/config.exs`:
   ```
   config :kafka_ex,
     # Set to your app name to configure the consumer_group
@@ -31,23 +31,23 @@ The docs can be found at [https://hexdocs.pm/kaffeine](https://hexdocs.pm/kaffei
 
     # Configure to your version of kafka
     kafka_version: "0.8.2"
+
+  config :kafka_impl, :impl, KafkaImpl.KafkaEx
+
+  config :kaffeine, consumer_wait_ms: 500
   ```
 3. Create a KafkaConsumer in your app with what topics you want to consume: `lib/my_simple_app/kafka_consumer.ex`:
   ```
   defmodule MySimpleApp.KafkaConsumer do
     def start_link(_opts) do
-      import Kaffeine.Spec
-
-      opts = [
-      ]
-
       [
-        consume("MyTopic", {MySimpleApp.KafkaConsumer, :my_topic, []}, []),
+        Kaffeine.consume("MyTopic", {MySimpleApp.KafkaConsumer, :my_topic, []}, []),
       ]
-      |> Kaffeine.start_consumer(opts)
+      |> Kaffeine.start_consumer()
     end
 
-    defp my_topic(event) do
+    @spec my_topic(Kaffeine.Event.t, Kaffeine.Consumer.t) :: :ok, {:error, String.t}
+    def my_topic(event, _consumer) do
       IO.inspect event
       :ok
     end

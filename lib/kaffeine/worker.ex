@@ -3,8 +3,8 @@ defmodule Kaffeine.Worker do
 
   def create_worker(opts \\ []) do
     brokers = case Keyword.fetch(opts, :brokers) do
-      {:ok, brokers} -> brokers
-      :error ->
+      {:ok, [_|_] = brokers} -> brokers
+      _ ->
         {:ok, brokers} = KafkaImpl.Util.kafka_brokers()
         brokers
     end
