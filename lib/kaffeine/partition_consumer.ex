@@ -33,8 +33,16 @@ defmodule Kaffeine.PartitionConsumer do
           Logger.debug "\n" <> Exception.format_stacktrace
       end
 
-      Offset.commit(offset, consumer)
+      Offset.commit(offset + 1, consumer)
     end)
+  end
+  defp process_fetch_response(%{partitions: [%{error_code: :no_error}]}, consumer) do
+    # not actually an error
+    consumer
+  end
+  defp process_fetch_response(%{partitions: [%{error_code: error_code}]}, consumer) do
+    log_message(consumer, "Error fetching messages", error_code) |> Logger.error
+    consumer
   end
   defp process_fetch_response(_, consumer), do: consumer # no messages
 

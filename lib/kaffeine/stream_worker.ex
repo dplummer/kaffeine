@@ -24,6 +24,7 @@ defmodule Kaffeine.StreamWorker do
          state = %{state | offset: Offset.fetch(state)},
          :ok   <- begin_streaming()
     do
+      log_message(state, "Beginning streaming at offset", state.offset) |> Logger.debug
       {:ok, state}
     else
       {:error, error} ->
@@ -41,7 +42,7 @@ defmodule Kaffeine.StreamWorker do
   end
 
   def handle_info(:fetch, state) do
-    case PartitionConsumer.messages(%{state | offset: state.offset + 1}) do
+    case PartitionConsumer.messages(state) do
       {:ok, state} ->
         Process.send_after(self(), :fetch, state.consumer_wait_ms)
         {:noreply, state}
