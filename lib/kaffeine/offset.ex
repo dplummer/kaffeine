@@ -18,6 +18,7 @@ defmodule Kaffeine.Offset do
   def commit(offset, consumer) do
     request = KafkaEx.Protocol.OffsetCommit.Request
       |> struct(Map.take(consumer, [:topic, :partition, :consumer_group, :offset]))
+      |> Map.put(:offset, offset)
 
     Logger.debug "Committing offset #{offset} for #{consumer.topic}##{consumer.partition}"
 
