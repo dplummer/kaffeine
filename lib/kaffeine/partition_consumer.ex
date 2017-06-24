@@ -30,7 +30,7 @@ defmodule Kaffeine.PartitionConsumer do
       rescue
         e ->
           log_message(consumer, offset, "Encountered unrecoverable processing error:", e) |> Logger.error
-          Logger.debug "\n" <> Exception.format_stacktrace
+          log_message(consumer, offset, "Stacktrace:", Exception.format_stacktrace) |> Logger.error
       end
 
       Offset.commit(offset + 1, consumer)
