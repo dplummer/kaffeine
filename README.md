@@ -34,7 +34,9 @@ The docs can be found at [https://hexdocs.pm/kaffeine](https://hexdocs.pm/kaffei
 
   config :kafka_impl, :impl, KafkaImpl.KafkaEx
 
-  config :kaffeine, consumer_wait_ms: 500
+  config :kaffeine,
+    consumer_wait_ms: 500,
+    catch_exceptions: true
   ```
 3. Create a KafkaConsumer in your app with what topics you want to consume: `lib/my_simple_app/kafka_consumer.ex`:
   ```

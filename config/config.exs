@@ -22,6 +22,8 @@ config :kafka_ex,
 
 config :kafka_impl, :impl, KafkaImpl.KafkaEx
 
-config :kaffeine, consumer_wait_ms: 500
+config :kaffeine,
+  consumer_wait_ms: 500,
+  catch_exceptions: true
 
 import_config "#{Mix.env}.exs"

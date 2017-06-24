@@ -25,13 +25,7 @@ defmodule Kaffeine.PartitionConsumer do
   ) do
     stats(consumer, :increment, "messages.fetched", Enum.count(messages))
     Enum.reduce(messages, consumer, fn (%{offset: offset} = message, consumer) ->
-      try do
-        _ = process_fetched_message(message, consumer)
-      rescue
-        e ->
-          log_message(consumer, offset, "Encountered unrecoverable processing error:", e) |> Logger.error
-          log_message(consumer, offset, "Stacktrace:", Exception.format_stacktrace) |> Logger.error
-      end
+      try_process_fetched_message(message, consumer)
 
       Offset.commit(offset + 1, consumer)
     end)
@@ -45,6 +39,22 @@ defmodule Kaffeine.PartitionConsumer do
     consumer
   end
   defp process_fetch_response(_, consumer), do: consumer # no messages
+
+  if Application.fetch_env!(:kaffeine, :catch_exceptions) do
+    defp try_process_fetched_message(message, consumer) do
+      try do
+        _ = process_fetched_message(message, consumer)
+      rescue
+        e ->
+          log_message(consumer, message.offset, "Encountered unrecoverable processing error:", e) |> Logger.error
+          Logger.error(Exception.format_stacktrace)
+      end
+    end
+  else
+    defp try_process_fetched_message(message, consumer) do
+      process_fetched_message(message, consumer)
+    end
+  end
 
   defp call_processor(message, consumer) do
     case consumer.handler do
