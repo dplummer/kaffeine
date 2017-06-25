@@ -5,7 +5,7 @@ defmodule Kaffeine.Util do
   def opts_or_application(opts, otp_app, app_key, opt_key) do
     case Keyword.fetch(opts, opt_key) do
       {:ok, _} = x -> x
-      :error -> Application.fetch_env(otp_app, app_key)
+      :error -> {:ok, EnvConfig.get(otp_app, app_key)}
     end
   end
 

@@ -25,6 +25,7 @@ defmodule Kaffeine.Mixfile do
     [
       {:kafka_ex, "~> 0.6"},
       {:kafka_impl, "~> 0.4"},
+      {:env_config, "~> 0.1"},
 
       # NON-PRODUCTION DEPS
       {:dialyxir, "~> 0.5", only: [:dev, :test]},
