@@ -2,10 +2,16 @@ defmodule Kaffeine.Util do
   def opts_or_application(opts, otp_app, key) do
     opts_or_application(opts, otp_app, key, key)
   end
+  def opts_or_application(opts, otp_app, key, app_fun) when is_function(app_fun) do
+    case Keyword.fetch(opts, key) do
+      {:ok, _} = x -> x
+      :error -> {:ok, app_fun.(otp_app, key)}
+    end
+  end
   def opts_or_application(opts, otp_app, app_key, opt_key) do
     case Keyword.fetch(opts, opt_key) do
       {:ok, _} = x -> x
-      :error -> {:ok, EnvConfig.get(otp_app, app_key)}
+      :error -> Application.fetch_env(otp_app, app_key)
     end
   end
 

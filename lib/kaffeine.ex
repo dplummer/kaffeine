@@ -57,7 +57,7 @@ defmodule Kaffeine do
   def consume(topic, mfa, opts \\ []) do
     with {:ok, consumer_group} <- opts_or_application(opts, :kafka_ex, :consumer_group),
          {:ok, kafka_version} <- opts_or_application(opts, :kafka_ex, :kafka_version),
-         {:ok, consumer_wait_ms} <- opts_or_application(opts, :kaffeine, :consumer_wait_ms)
+         {:ok, consumer_wait_ms} <- opts_or_application(opts, :kaffeine, :consumer_wait_ms, fn app, key -> EnvConfig.get_integer(app, key) end)
     do
       %Consumer{
         topic: topic,
