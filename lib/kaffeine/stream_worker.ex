@@ -1,4 +1,6 @@
 defmodule Kaffeine.StreamWorker do
+  use GenServer
+
   require Logger
 
   import Kaffeine.Util, only: [log_message: 3]
