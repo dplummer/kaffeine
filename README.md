@@ -43,13 +43,13 @@ The docs can be found at [https://hexdocs.pm/kaffeine](https://hexdocs.pm/kaffei
   defmodule MySimpleApp.KafkaConsumer do
     def start_link(_opts) do
       [
-        Kaffeine.consume("MyTopic", {MySimpleApp.KafkaConsumer, :my_topic, []}, []),
+        Kaffeine.consume("MyTopic", {MySimpleApp.KafkaConsumer, :my_hander, []}, []),
       ]
-      |> Kaffeine.start_consumer()
+      |> Kaffeine.start_consumers()
     end
 
-    @spec my_topic(Kaffeine.Event.t, Kaffeine.Consumer.t) :: :ok, {:error, String.t}
-    def my_topic(event, _consumer) do
+    @spec my_handler(Kaffeine.Event.t, Kaffeine.Consumer.t) :: :ok | {:error, String.t}
+    def my_handler(event, _consumer) do
       IO.inspect event
       :ok
     end
