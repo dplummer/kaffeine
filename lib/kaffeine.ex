@@ -87,7 +87,9 @@ defmodule Kaffeine do
   @doc """
   Build the configuration for a produce worker for a specific topic.
 
-  ex: `producer("NewMessage", encoder: &Poison.encode/1, partitioner: &mod(&1.id, &2))`
+  ex: `producer("NewMessage",
+    encoder: &Poison.encode/1,
+    partitioner: fn message, max_partitions -> {:ok, rem(message.user_id, max_partitions) + 1} end)`
 
   opts:
 
@@ -104,7 +106,7 @@ defmodule Kaffeine do
     An anonymous function that is used to determine which partition to put the message in. Is
     passed the message and the max number of partitions for the topic.
 
-    ex: `fn message, max_partitions -> {:ok, mod(message.id, max_partitions)} end`
+    ex: `fn message, max_partitions -> {:ok, rem(message.user_id, max_partitions) + 1} end`
 
   * `required_acks`
 
