@@ -51,7 +51,12 @@ defmodule Kaffeine do
               [child | acc]
           end
         %Producer{} = producer, acc ->
-          [{Producer, %{producer | brokers: brokers, kafka_impl: kafka_impl, kafka_version: kafka_version}} | acc]
+          [{Producer, %{ producer |
+            brokers: brokers,
+            kafka_impl: kafka_impl,
+            kafka_version: kafka_version,
+            max_partitions: Map.get(partitions, producer.topic, 1),
+          }} | acc]
       end
       )
       |> Supervisor.start_link(super_opts)

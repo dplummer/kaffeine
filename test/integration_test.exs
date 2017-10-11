@@ -12,7 +12,7 @@ defmodule Kaffeine.IntegrationTest do
     {:ok, worker} = Kaffeine.Worker.create_worker(brokers: brokers,
                                                   consumer_group: :no_consumer_group,
                                                   kafka_impl: KafkaImpl.KafkaEx)
-    msg = %Request{topic: "test", partition: 0, messages: [%Message{value: "setup"}]}
+    msg = %Request{topic: topic, partition: partition, messages: [%Message{value: "setup"}]}
 
     assert :ok = KafkaImpl.KafkaEx.produce(msg, worker_name: worker)
 
@@ -35,7 +35,7 @@ defmodule Kaffeine.IntegrationTest do
     end)
 
     {:ok, _pid} = Kaffeine.start(
-      [Kaffeine.consumer("test", fun)],
+      [Kaffeine.consumer(topic, fun)],
       brokers: brokers,
       kafka_impl: KafkaImpl.KafkaEx
     )

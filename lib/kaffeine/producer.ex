@@ -19,6 +19,7 @@ defmodule Kaffeine.Producer do
     encoder: encoder_fun_t,
     kafka_impl: module,
     kafka_version: String.t,
+    max_partitions: integer,
     name: atom,
     partitioner: partitioner_fun_t,
     required_acks: integer,
@@ -32,6 +33,7 @@ defmodule Kaffeine.Producer do
     encoder: &__MODULE__.ok_fun/1,
     kafka_impl: Application.fetch_env!(:kafka_impl, :impl),
     kafka_version: "0.8.2",
+    max_partitions: nil,
     name: nil,
     partitioner: &__MODULE__.zero_fun/2,
     required_acks: 0,
@@ -71,10 +73,7 @@ defmodule Kaffeine.Producer do
                                                kafka_version: producer.kafka_version,
                                                kafka_impl: producer.kafka_impl)
 
-    {:ok, partitions} = Kaffeine.Partitions.partition_counts(producer.kafka_impl, pid)
-    max_partitions = Map.get(partitions, producer.topic, 0)
-
-    partitioner = fn message -> producer.partitioner.(message, max_partitions) end
+    partitioner = fn message -> producer.partitioner.(message, producer.max_partitions) end
 
     {:ok, %{producer | worker_pid: pid, partitioner: partitioner}}
   end
