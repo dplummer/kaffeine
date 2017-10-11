@@ -8,7 +8,7 @@ defmodule Kaffeine.Mixfile do
       deps: deps(),
       description: description(),
       dialyzer: [plt_add_deps: :transitive],
-      elixir: "~> 1.4",
+      elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env),
       package: package(),
       start_permanent: Mix.env == :prod,
