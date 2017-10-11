@@ -1,4 +1,19 @@
 defmodule Kaffeine.Partitions do
+  @moduledoc """
+  Helper functions for fetching partition data from Kafka.
+  """
+
+  @doc """
+  Get the counts of partitions for all topics from Kafka.
+
+  ## Example:
+
+      iex> Kaffeine.Partitions.partition_counts(brokers, "0.8.2", KafkaImpl.KafkaEx)
+      {:ok, %{"test" => 1, "MyTopic" => 12}}
+
+      iex> Kaffeine.Partitions.partition_counts(KafkaImpl.KafkaEx, worker_pid)
+      {:ok, %{"test" => 1, "MyTopic" => 12}}
+  """
   def partition_counts(brokers, kafka_version, kafka_impl) do
     with {:ok, worker} <- Kaffeine.Worker.create_worker(kafka_version: kafka_version,
                                                         brokers: brokers,
