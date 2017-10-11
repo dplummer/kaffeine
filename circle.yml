@@ -26,7 +26,9 @@ jobs:
 
       - run:
           name: Wait for kafka to start
-          command: ./bin/wait_for_it.sh kafka:9092
+          command: |
+            echo "127.0.0.1 kafka" >> /etc/hosts
+            ./bin/wait_for_it.sh kafka:9092
 
       - restore_cache:
           key: kaffeine-{{ .Branch }}
