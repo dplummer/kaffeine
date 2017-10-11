@@ -24,6 +24,10 @@ jobs:
     steps:
       - checkout
 
+      - run:
+          name: Wait for kafka to start
+          command: ./bin/wait_for_it.sh kafka:9092
+
       - restore_cache:
           key: kaffeine-{{ .Branch }}
           key: kaffeine-master
