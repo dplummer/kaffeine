@@ -3,20 +3,29 @@ defmodule Kaffeine.IntegrationTest do
 
   alias KafkaEx.Protocol.Produce.{Request, Message}
 
-  test "consume messages" do
+  setup do
     {:ok, brokers} = KafkaImpl.Util.kafka_brokers()
-    test_pid = self()
     topic = "test"
     partition = 0
+
+    # ensure the test topic is created before trying to consume from it
+    {:ok, worker} = Kaffeine.Worker.create_worker(brokers: brokers,
+                                                  consumer_group: :no_consumer_group,
+                                                  kafka_impl: KafkaImpl.KafkaEx)
+    msg = %Request{topic: "test", partition: 0, messages: [%Message{value: "setup"}]}
+
+    assert :ok = KafkaImpl.KafkaEx.produce(msg, worker_name: worker)
+
+    {:ok, worker: worker, brokers: brokers, topic: topic, partition: partition}
+  end
+
+  test "consume messages", %{worker: worker, brokers: brokers, topic: topic, partition: partition} do
+    test_pid = self()
 
     fun = fn event, _consumer ->
       send test_pid, {:event, event}
       :ok
     end
-
-    {:ok, worker} = Kaffeine.Worker.create_worker(brokers: brokers,
-                                                  consumer_group: :no_consumer_group,
-                                                  kafka_impl: KafkaImpl.KafkaEx)
 
     messages = Enum.map(1..10, fn _ ->
       message = "hey #{:rand.uniform(10000)}"
@@ -57,14 +66,8 @@ defmodule Kaffeine.IntegrationTest do
     end)
   end
 
-  test "produce messages" do
-    {:ok, brokers} = KafkaImpl.Util.kafka_brokers()
+  test "produce messages", %{brokers: brokers, topic: topic} do
     test_pid = self()
-    topic = "test"
-    opts = [
-      brokers: brokers,
-      kafka_impl: KafkaImpl.KafkaEx,
-    ]
 
     fun = fn event, _consumer ->
       send test_pid, {:event, event}
@@ -76,13 +79,15 @@ defmodule Kaffeine.IntegrationTest do
         Kaffeine.producer(topic,
                           partition_fun: fn _event -> 0 end,
                           encoder: &{:ok, String.reverse(&1)}),
+        Kaffeine.consumer(topic, fun),
       ],
-      opts
+      [
+        brokers: brokers,
+        kafka_impl: KafkaImpl.KafkaEx,
+      ]
     )
 
-    Kaffeine.produce("hello world", topic)
-
-    {:ok, _pid} = Kaffeine.start([Kaffeine.consumer(topic, fun)], opts)
+    assert :ok = Kaffeine.produce("hello world", topic)
 
     assert_receive {:event, %Kaffeine.Event{message: "dlrow olleh"}}
   end
