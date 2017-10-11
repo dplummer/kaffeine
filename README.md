@@ -64,9 +64,10 @@ The docs can be found at https://hexdocs.pm/kaffeine
   supervisor(MySimpleApp.KafkaConsumer, [])
   ```
 5. To produce messages:
+  This is handled by the worker setup in the KafkaSupervisor, and encoded by the encoder
+  function listed there
+
   ```
-  # This is handled by the worker setup in the KafkaSupervisor, and encoded by the encoder
-  # function listed there
   Kaffeine.produce(%{foo: 1, bar: 2}, "AnotherTopic")
   ```
 
