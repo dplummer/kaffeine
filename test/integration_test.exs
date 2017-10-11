@@ -25,8 +25,8 @@ defmodule Kaffeine.IntegrationTest do
       message
     end)
 
-    {:ok, _pid} = Kaffeine.start_consumers(
-      [Kaffeine.consume("test", fun)],
+    {:ok, _pid} = Kaffeine.start(
+      [Kaffeine.consumer("test", fun)],
       brokers: brokers,
       kafka_impl: KafkaImpl.KafkaEx
     )
@@ -55,5 +55,33 @@ defmodule Kaffeine.IntegrationTest do
       assert_receive {:event, %Kaffeine.Event{topic: ^topic, partition: ^partition, message: ^message}},
         Application.fetch_env!(:kaffeine, :consumer_wait_ms) + 50
     end)
+  end
+
+  test "produce messages" do
+    {:ok, brokers} = KafkaImpl.Util.kafka_brokers()
+    test_pid = self()
+    topic = "test"
+
+    fun = fn event, _consumer ->
+      send test_pid, {:event, event}
+      :ok
+    end
+
+    {:ok, _pid} = Kaffeine.start(
+      [
+        Kaffeine.producer(topic,
+                          partition_fun: fn _event -> 0 end,
+                          encoder: &{:ok, String.reverse(&1)}),
+        Kaffeine.consumer(topic, fun),
+      ],
+      [
+        brokers: brokers,
+        kafka_impl: KafkaImpl.KafkaEx,
+      ]
+    )
+
+    Kaffeine.produce("hello world", topic)
+
+    assert_receive {:event, %Kaffeine.Event{message: "dlrow olleh"}}
   end
 end
