@@ -6,7 +6,14 @@ jobs:
 
     docker:
       - image: avvo/elixir-circleci:1.4.1-3
+      - image: wurstmeister/zookeeper:latest
       - image: wurstmeister/kafka:0.8.2.2
+        environment:
+          KAFKA_ADVERTISED_HOST_NAME: kafka
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+          KAFKA_NUM_PARTITIONS: 12
+          KAFKA_DELETE_TOPIC_ENABLE: "true"
+          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
     environment:
       MIX_ENV: test
