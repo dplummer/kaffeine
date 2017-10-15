@@ -51,12 +51,18 @@ defmodule Kaffeine do
               [child | acc]
           end
         %Producer{} = producer, acc ->
-          [{Producer, %{ producer |
-            brokers: brokers,
-            kafka_impl: kafka_impl,
-            kafka_version: kafka_version,
-            max_partitions: Map.get(partitions, producer.topic, 1),
-          }} | acc]
+          child = worker(Producer, [
+            %{ producer |
+              brokers: brokers,
+              kafka_impl: kafka_impl,
+              kafka_version: kafka_version,
+              max_partitions: Map.get(partitions, producer.topic, 1),
+            }
+          ],
+          [
+            id: :"Kaffeine.Producer.#{producer.topic}",
+          ])
+          [child | acc]
       end
       )
       |> Supervisor.start_link(super_opts)
@@ -89,7 +95,7 @@ defmodule Kaffeine do
 
   ex: `producer("NewMessage",
     encoder: &Poison.encode/1,
-    partitioner: fn message, max_partitions -> {:ok, rem(message.user_id, max_partitions) + 1} end)`
+    partitioner: fn message, max_partitions -> {:ok, rem(message.user_id, max_partitions)} end)`
 
   opts:
 
@@ -106,7 +112,7 @@ defmodule Kaffeine do
     An anonymous function that is used to determine which partition to put the message in. Is
     passed the message and the max number of partitions for the topic.
 
-    ex: `fn message, max_partitions -> {:ok, rem(message.user_id, max_partitions) + 1} end`
+    ex: `fn message, max_partitions -> {:ok, rem(message.user_id, max_partitions)} end`
 
   * `required_acks`
 

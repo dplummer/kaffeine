@@ -24,13 +24,15 @@ defmodule Kaffeine.Mixfile do
   defp deps do
     [
       {:kafka_ex, "~> 0.6"},
-      {:kafka_impl, "~> 0.4"},
+      #{:kafka_impl, "~> 0.4"},
+      {:kafka_impl, github: "avvo/kafka_impl", branch: "process-tree"},
       {:env_config, "~> 0.1"},
 
       # NON-PRODUCTION DEPS
       {:dialyxir, "~> 0.5", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
+      {:junit_formatter, github: "victorolinasc/junit-formatter", only: [:test]},
     ]
   end
 

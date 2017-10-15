@@ -20,7 +20,6 @@ defmodule Kaffeine.Producer do
     kafka_impl: module,
     kafka_version: String.t,
     max_partitions: integer,
-    name: atom,
     partitioner: partitioner_fun_t,
     required_acks: integer,
     timeout: integer,
@@ -34,7 +33,6 @@ defmodule Kaffeine.Producer do
     kafka_impl: Application.fetch_env!(:kafka_impl, :impl),
     kafka_version: "0.8.2",
     max_partitions: nil,
-    name: nil,
     partitioner: &__MODULE__.zero_fun/2,
     required_acks: 0,
     timeout: 200,
@@ -49,17 +47,6 @@ defmodule Kaffeine.Producer do
   @doc false
   @spec zero_fun(any, integer) :: {:ok, 0}
   def zero_fun(_message, _max_partitions), do: {:ok, 0}
-
-  @doc false
-  def child_spec(producer) do
-    %{
-      id: :"Kaffeine.Producer-#{producer.name}",
-      start: { __MODULE__, :start_link, [producer]},
-      restart: :permanent,
-      shutdown: 5000,
-      type: :worker
-    }
-  end
 
   @doc false
   def start_link(producer) do

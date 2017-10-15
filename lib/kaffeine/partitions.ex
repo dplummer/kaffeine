@@ -25,7 +25,7 @@ defmodule Kaffeine.Partitions do
       {:ok, counts}
     end
   end
-  def partition_counts(kafka_impl, worker) when is_pid(worker) do
+  def partition_counts(kafka_impl, worker) when is_pid(worker) or is_atom(worker) do
     %{topic_metadatas: topic_metadatas} = kafka_impl.metadata(worker_name: worker)
 
     topic_metadatas
