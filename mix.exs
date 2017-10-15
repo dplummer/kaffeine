@@ -48,7 +48,7 @@ defmodule Kaffeine.Mixfile do
       maintainers: ["Avvo, Inc", "Donald Plummer"],
       licenses: ["MIT"],
       links: %{
-        "GitHub" => "https://github.com/avvo/kaffeine"
+        "GitHub" => "https://github.com/dplummer/kaffeine"
       }
     ]
   end
