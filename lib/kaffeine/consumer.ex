@@ -7,7 +7,7 @@ defmodule Kaffeine.Consumer do
 
   @type mfa_t :: {module, atom, [any]}
   @type handler_fun_t :: (Kaffeine.Event.t, t -> :ok | {:error, String.t})
-  @type brokers_t :: [{binary|char_list, number}]
+  @type brokers_t :: [{binary|charlist, number}]
   @type consumer_group_t :: binary | :no_consumer_group
   @type decoder_fun_t :: (Kaffeine.Event.message_t -> {:ok, any} | {:error, String.t})
   @type stats_fun_t :: (atom, String.t -> any) | (atom, String.t, integer -> any)

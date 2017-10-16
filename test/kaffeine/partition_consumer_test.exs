@@ -4,14 +4,17 @@ defmodule Kaffeine.PartitionConsumerTest do
   alias KafkaImpl.KafkaMock
 
   test "fetch messages" do
-    {:ok, _kafka} = KafkaMock.start_link
+    {:ok, _} = KafkaMock.start_link
     topic = "test"
     partition = 0
     offset = 0
     message = "foo"
     test_pid = self()
 
-    KafkaMock.TestHelper.send_message(test_pid, {topic, partition, %KafkaEx.Protocol.Fetch.Message{offset: offset, value: message}, offset})
+    KafkaMock.TestHelper.send_messages(topic, partition, [%KafkaEx.Protocol.Fetch.Message{
+      value: message,
+      offset: offset,
+    }])
 
     consumer = %Kaffeine.Consumer{
       topic: topic,

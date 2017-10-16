@@ -2,7 +2,7 @@
 
 A framework for consuming events from Kafka.
 
-The docs can be found at [https://hexdocs.pm/kaffeine](https://hexdocs.pm/kaffeine).
+The docs can be found at https://hexdocs.pm/kaffeine
 
 ## Installation
 
@@ -30,7 +30,10 @@ The docs can be found at [https://hexdocs.pm/kaffeine](https://hexdocs.pm/kaffei
     sync_timeout: 4000,
 
     # Configure to your version of kafka
-    kafka_version: "0.8.2"
+    kafka_version: "0.8.2",
+
+    # Using SSL on Kafka?
+    use_ssl: false
 
   config :kafka_impl, :impl, KafkaImpl.KafkaEx
 
@@ -38,14 +41,15 @@ The docs can be found at [https://hexdocs.pm/kaffeine](https://hexdocs.pm/kaffei
     consumer_wait_ms: {:system, "KAFFEINE_CONSUMER_WAIT_MS", 500},
     catch_exceptions: {:system, "KAFFEINE_CATCH_EXCEPTIONS", true}
   ```
-3. Create a KafkaConsumer in your app with what topics you want to consume: `lib/my_simple_app/kafka_consumer.ex`:
+3. Create a KafkaSupervisor in your app with what topics you want to consume/produce: `lib/my_simple_app/kafka_supervisor.ex`:
   ```
-  defmodule MySimpleApp.KafkaConsumer do
+  defmodule MySimpleApp.KafkaSupervisor do
     def start_link(_opts) do
       [
-        Kaffeine.consume("MyTopic", {MySimpleApp.KafkaConsumer, :my_hander, []}, []),
+        Kaffeine.consumer("MyTopic", {MySimpleApp.KafkaConsumer, :my_hander, []}, []),
+        Kaffeine.producer("AnotherTopic", encoder: &Poison.encode/1)
       ]
-      |> Kaffeine.start_consumers()
+      |> Kaffeine.start()
     end
 
     @spec my_handler(Kaffeine.Event.t, Kaffeine.Consumer.t) :: :ok | {:error, String.t}
@@ -58,6 +62,13 @@ The docs can be found at [https://hexdocs.pm/kaffeine](https://hexdocs.pm/kaffei
 4. Add the KafkaConsumer to your supervision tree:
   ```
   supervisor(MySimpleApp.KafkaConsumer, [])
+  ```
+5. To produce messages:
+  This is handled by the worker setup in the KafkaSupervisor, and encoded by the encoder
+  function listed there
+
+  ```
+  Kaffeine.produce(%{foo: 1, bar: 2}, "AnotherTopic")
   ```
 
 ## Contributing

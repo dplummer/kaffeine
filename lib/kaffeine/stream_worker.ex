@@ -17,11 +17,14 @@ defmodule Kaffeine.StreamWorker do
   end
 
   def via_name(topic, partition) do
-    {:via, Registry, {Registry.Consumers, {topic, partition}}}
+    {:via, Registry, {Registry.Kaffeine.Consumers, {topic, partition}}}
   end
 
   def init(state) do
-    with {:ok, worker_pid} <- Worker.create_worker(brokers: state.brokers, kafka_version: state.kafka_version, kafka_impl: state.kafka_impl, consumer_group: state.consumer_group),
+    with {:ok, worker_pid} <- Worker.create_worker(brokers: state.brokers,
+                                                   kafka_version: state.kafka_version,
+                                                   kafka_impl: state.kafka_impl,
+                                                   consumer_group: state.consumer_group),
          state = %{state | worker_pid: worker_pid},
          state = %{state | offset: Offset.fetch(state)},
          :ok   <- begin_streaming()

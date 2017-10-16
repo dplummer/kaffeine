@@ -7,7 +7,7 @@ defmodule Kaffeine.Application do
     import Supervisor.Spec, warn: false
 
     children = [
-      supervisor(Registry, [:unique, Registry.Consumers], [id: Registry.Consumers]),
+      supervisor(Registry, [:unique, Registry.Kaffeine.Consumers], [id: Registry.Kaffeine.Consumers]),
     ]
 
     opts = [strategy: :one_for_one, name: Kaffeine.Supervisor]

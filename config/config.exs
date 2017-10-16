@@ -18,7 +18,8 @@ config :kafka_ex,
   max_restarts: 10,
   # Supervision max_seconds -  the time frame in which :max_restarts applies
   max_seconds: 60,
-  kafka_version: "0.8.2"
+  kafka_version: "0.8.2",
+  use_ssl: false
 
 config :kafka_impl, :impl, KafkaImpl.KafkaEx
 
