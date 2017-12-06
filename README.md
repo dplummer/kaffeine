@@ -59,9 +59,9 @@ The docs can be found at https://hexdocs.pm/kaffeine
     end
   end
   ```
-4. Add the KafkaConsumer to your supervision tree:
+4. Add the KafkaSupervisor to your supervision tree:
   ```
-  supervisor(MySimpleApp.KafkaConsumer, [])
+  supervisor(MySimpleApp.KafkaSupervisor, [])
   ```
 5. To produce messages:
   This is handled by the worker setup in the KafkaSupervisor, and encoded by the encoder
