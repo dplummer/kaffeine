@@ -10,7 +10,7 @@ The docs can be found at https://hexdocs.pm/kaffeine
   ```
   def deps do
     [
-      {:kaffeine, "~> 0.1.0"},
+      {:kaffeine, "~> 0.2.0"},
     ]
   end
   ```
